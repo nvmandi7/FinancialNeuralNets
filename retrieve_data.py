@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
-import pandas.io.data as web
+#import pandas.io.data as web
+import pandas_datareader.data as web
 from datetime import datetime
 
 start = datetime(2000,1,1)
-end = datetime(2016,4,20)
+end = datetime(2016,5,20)
 
 #S&P Prediction
 stockRawData = web.DataReader("^GSPC", 'yahoo', start, end)
@@ -13,8 +14,8 @@ num_rows = len(stockRawData.index)
 def create_lookback_returns_data(stock_data, num_days):
 	num_rows = len(stock_data.index)
 	stock_data_features = np.zeros([num_rows-num_days+1,num_days])
-	for day in xrange(0, num_rows-num_days+1):
-		for i in xrange(num_days):
+	for day in range(0, num_rows-num_days+1):
+		for i in range(num_days):
 			new_day = day+i
 			adjustment_factor = float(stock_data['Adj Close'][new_day]/stock_data['Close'][new_day])
 			adjusted_open = adjustment_factor*stock_data['Open'][new_day]
@@ -33,7 +34,7 @@ SELL or 0 otherwise
 def create_labels(stock_data, lookback_days):
 	num_rows = len(stock_data.index)
 	labels = []
-	for i in xrange(lookback_days-1, num_rows-1):
+	for i in range(lookback_days-1, num_rows-1):
 		cur_day = stock_data.iloc[i+1]['Adj Close']
 		prev_day = stock_data.iloc[i]['Adj Close']
 		day_return  = 100.0*(cur_day-prev_day)/prev_day
@@ -58,7 +59,7 @@ MAX-MIN Normalization in range [-1,1]
 '''
 def normalize_data(data):
 	num_cols = data.shape[1]
-	for i in xrange(num_cols):
+	for i in range(num_cols):
 		col = data[:,i]
 		minimum = col.min()
 		maximum = col.max()
