@@ -1,6 +1,6 @@
 from keras.utils import np_utils
 from keras.models import Sequential
-from keras.optimizers import SGD
+from keras.optimizers import SGD, Adagrad
 from keras.layers.core import Dense, Activation, Dropout
 from keras.layers.recurrent import LSTM
 from keras.layers.embeddings import Embedding
@@ -60,7 +60,8 @@ Trying Recurrent NN
 ##################################
 
 ## Compile the model with categorical_crossentrotry as the loss, and stochastic gradient descent (learning rate=0.001, momentum=0.5,as the optimizer)
-model.compile(loss='binary_crossentropy', optimizer=SGD(lr=0.01, momentum=0.5, nesterov=True), metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.01, momentum=0.5), metrics=['accuracy'])
+for l in model.layers: print(l.get_weights(), '\n')
 
 ## Fit the model (10% of training data used as validation set)
 model.fit(X_train, y_train, nb_epoch=10, batch_size=1,validation_split=0.1, show_accuracy=True)
