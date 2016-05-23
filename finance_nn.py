@@ -6,7 +6,9 @@ from keras.layers.recurrent import LSTM
 from keras.layers.embeddings import Embedding
 import retrieve_data
 
-
+normalized_data = retrieve_data.normalized_data
+labels = retrieve_data.labels
+lookback_days = retrieve_data.lookback_days
 
 test_days = 700
 
@@ -62,6 +64,12 @@ model.compile(loss='binary_crossentropy', optimizer=SGD(lr=0.01, momentum=0.5, n
 
 ## Fit the model (10% of training data used as validation set)
 model.fit(X_train, y_train, nb_epoch=10, batch_size=1,validation_split=0.1, show_accuracy=True)
+
+# score, acc = model.evaluate(X_test, y_test,
+#                             batch_size=1)
+# print('Test score:', score)
+# print('Test accuracy:', acc)
+
 
 test_labels = model.predict_classes(X_test, batch_size=1,verbose=1)
 
