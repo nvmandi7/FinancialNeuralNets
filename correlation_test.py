@@ -3,20 +3,26 @@ import pandas as pd
 #import pandas.io.data as web
 import pandas_datareader.data as web
 import matplotlib.pyplot as plt
-from datetime import datetime
+import datetime
 
-start = datetime(2000,1,1)
-end = datetime(2016,5,20)
+start = datetime.datetime(2015,1,1)
+end = datetime.datetime(2016,5,20)
+day = datetime.timedelta(days=1)
 
-stocks = ["^GSPC", "AAPL", "GE", "PG", "INTC", "TM", "KO", "JPM", "T"]
+stocks = ["^GSPC", "AAPL", "GE", "PG", "INTC", "TM", "KO", "JPM", "T"] #The stocks to check correlation with.
 
-correlation_factors = ["^BSESN", "^FCHI", "^FTSE", "CNY=X", "JPY=X", "GBP=X", "EUR=X"] #India, France, England, USD/CNH, USD/JPY, USD/GBP, USD/EUR
+correlation_factors_no_offset = ["^SSEC", "^N225", "^BSESN"] #China, Japan, India
+correlation_factors_offset = ["^DJI", "^IXIC", "^GDAXI", "^FCHI", "^FTSE", "CNY=X", "JPY=X", "GBP=X", "EUR=X"] #DOW, Nasdaq, Germany, France, England, USD/CNY, USD/JPY, USD/GBP, USD/EUR
+correlation_factors = correlation_factors_no_offset+correlation_factors_offset
 
-#The stocks to check correlation with.
 stock_data = web.DataReader(stocks, 'yahoo', start, end)["Adj Close"]
 print("Collected Stock Data")
 
-factors = web.DataReader(correlation_factors, 'yahoo', start, end)["Adj Close"]
+factors_without_offset = web.DataReader(correlation_factors_no_offset, 'yahoo', start, end)["Adj Close"]
+factors_with_offset = web.DataReader(correlation_factors_offset, 'yahoo', start-day, end-day)["Adj Close"]
+factors_with_offset = factors_with_offset.shift(1)
+
+factors = pd.concat([factors_without_offset, factors_with_offset], axis=1)
 
 for stock in stocks:
 	for factor in correlation_factors:
@@ -25,12 +31,11 @@ for stock in stocks:
 
 		print("\n\n" + factor + " - " + stock)
 		print(correlation_table[stock].corr(correlation_table[factor]))
-		# print(correlation_table)
-		# correlation_table.plot.scatter(x=stock, y=factor)
-		# plt.show()
+		print(correlation_table)
+		correlation_table.plot.scatter(x=stock, y=factor)
+		plt.show()
 
 # print(factors)
 # print(len(factors.index))
 # num_rows = len(stockRawData.index)
 # print(num_rows)
-
