@@ -2,10 +2,13 @@ import numpy as np
 import pandas as pd
 #import pandas.io.data as web
 import pandas_datareader.data as web
-from datetime import datetime
+import datetime
 
-start = datetime(2000,1,1)
-end = datetime(2016,5,20)
+# ------------------------------------------
+# Time Series Features
+
+start = datetime.datetime(2000,1,1)
+end = datetime.datetime(2016,5,20)
 
 #S&P Prediction
 stockRawData = web.DataReader("^GSPC", 'yahoo', start, end)
@@ -69,4 +72,13 @@ def normalize_data(data):
 	return data
 
 normalized_data = normalize_data(stock_data)
+
+# ------------------------------------------
+# Frequency Domain Features
+sample = 'AAPL'
+sampleRawData = web.DataReader(sample, 'yahoo', start, end)
+sampleDataTime = create_lookback_returns_data(sampleRawData, lookback_days)
+sampleDataFreq = np.fft.fft(sampleDataTime)
+
+
 
