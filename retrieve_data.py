@@ -81,3 +81,12 @@ def normalize_data(data):
 
 normalized_data = normalize_data(stock_data)
 
+# ------------------------------------------
+# Frequency Domain Features
+sample = 'AAPL'
+sampleRawData = web.DataReader(sample, 'yahoo', start, end)
+sampleDataTime = create_lookback_returns_data(sampleRawData, lookback_days)
+sampleDataFreq = np.fft.fft(sampleDataTime)
+
+
+
