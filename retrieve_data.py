@@ -13,6 +13,16 @@ day = datetime.timedelta(days=1)
 
 #S&P Prediction
 stockRawData = web.DataReader("^GSPC", 'yahoo', start, end)
+
+correlation_factors_no_offset = ["^SSEC", "^N225", "^BSESN"] #China, Japan, India
+correlation_factors_offset = ["^GSPC", "^DJI", "^IXIC", "^GDAXI", "^FCHI", "^FTSE", "CNY=X", "JPY=X", "GBP=X", "EUR=X"] #DOW, Nasdaq, Germany, France, England, USD/CNY, USD/JPY, USD/GBP, USD/EUR
+correlation_factors = correlation_factors_no_offset+correlation_factors_offset
+factors_without_offset = web.DataReader(correlation_factors_no_offset, 'yahoo', start, end)["Adj Close"]
+factors_with_offset = web.DataReader(correlation_factors_offset, 'yahoo', start-day, end-day)["Adj Close"]
+factors_with_offset = factors_with_offset.shift(1)
+factors = pd.concat([factors_without_offset, factors_with_offset], axis=1)
+factors = factors.diff()/factors.shift(1)*100
+
 num_rows = len(stockRawData.index)
 
 def create_lookback_returns_data(stock_data, num_days):
