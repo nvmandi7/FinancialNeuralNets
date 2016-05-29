@@ -116,7 +116,7 @@ factors = 100.0 * factors.diff() / factors.shift(1)
 factors = factors.drop(['Adj Close', 'Open', 'Close'], 1)
 factors = factors.ix[lookback_days-1:]
 
-design = np.hstack([factors, sampleDataTime, sampleDataFreq])
+design = np.hstack([factors, sampleDataTime, sampleDataFreq])[:-1]
 labels = create_labels(sampleAdjCloseData, lookback_days)
 
 
