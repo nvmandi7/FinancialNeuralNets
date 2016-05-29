@@ -110,12 +110,12 @@ sampleAdjCloseData = factors['Adj Close']
 sampleCloseData = factors['Close']
 sampleOpenData = factors['Open']
 sampleDataTime = create_lookback_returns_data(sampleAdjCloseData, sampleCloseData, sampleOpenData, lookback_days)
-sampleDataFreq = np.fft.fft(sampleDataTime)
+sampleDataFreq = np.absolute(np.fft.fft(sampleDataTime))
 
 ###
 # Design matrix
-design = np.ndarray((len(factors['Adj Close']), len(factors) + 2*len(sampleDataTime)))
-design[:,len(factors)] = factors
+design = np.hstack([factors, sampleDataTime, sampleDataFreq])
+
 
 
 
