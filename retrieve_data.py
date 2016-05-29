@@ -36,7 +36,7 @@ def create_lookback_returns_data(stock_adj_close, sample_close, sample_open, num
 			stock_data_features[day,i] = 100.0*(stock_adj_close[new_day]-adjusted_open)/adjusted_open
 	return stock_data_features
 
-lookback_days = 5 #includes current day
+lookback_days = 10 #includes current day
 # stock_data = create_lookback_returns_data(stockRawData, lookback_days)
 # stock_data = np.delete(stock_data, -1, 0) #Remove last row since we can't label it
 
@@ -101,11 +101,9 @@ factors_with_offset = web.DataReader(correlation_factors_offset, 'yahoo', start-
 	
 
 factors = pd.concat([sampleRawData['Adj Close'], sampleRawData['Open'], sampleRawData['Close'], factors_without_offset, factors_with_offset], axis=1).dropna()
-factors = 100.0 * factors.diff() / factors.shift(1)
 
 # ------------------------------------------
 # Frequency Domain Features
-print(factors.head())
 sampleAdjCloseData = factors['Adj Close']
 sampleCloseData = factors['Close']
 sampleOpenData = factors['Open']
@@ -114,6 +112,10 @@ sampleDataFreq = np.absolute(np.fft.fft(sampleDataTime))
 
 ###
 # Design matrix
+factors = 100.0 * factors.diff() / factors.shift(1)
+factors = factors.drop(['Adj Close', 'Open', 'Close'], 1)
+factors = factors.ix[lookback_days-1:]
+
 design = np.hstack([factors, sampleDataTime, sampleDataFreq])
 
 
