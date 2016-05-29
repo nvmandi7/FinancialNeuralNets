@@ -45,12 +45,12 @@ Creating classification labels.
 BUY or 1 if returns for next day are positive
 SELL or 0 otherwise
 '''
-def create_labels(stock_data, lookback_days):
-	num_rows = len(stock_data.index)
+def create_labels(stock_adj_close, lookback_days):
+	num_rows = len(stock_adj_close.index)
 	labels = []
 	for i in range(lookback_days-1, num_rows-1):
-		cur_day = stock_data.iloc[i+1]['Adj Close']
-		prev_day = stock_data.iloc[i]['Adj Close']
+		cur_day = stock_adj_close.iloc[i+1]
+		prev_day = stock_adj_close.iloc[i]
 		day_return  = 100.0*(cur_day-prev_day)/prev_day
 		if day_return < 0:
 			labels.append(0) #SELL
@@ -117,7 +117,7 @@ factors = factors.drop(['Adj Close', 'Open', 'Close'], 1)
 factors = factors.ix[lookback_days-1:]
 
 design = np.hstack([factors, sampleDataTime, sampleDataFreq])
-
+labels = create_labels(sampleAdjCloseData, lookback_days)
 
 
 
