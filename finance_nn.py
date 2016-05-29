@@ -4,16 +4,12 @@ from keras.optimizers import SGD, Adagrad
 from keras.layers.core import Dense, Activation, Dropout
 from keras.layers.recurrent import LSTM
 from keras.layers.embeddings import Embedding
-import retrieve_data
+from retrieve_data import design, labels, lookback_days
 
-normalized_data = retrieve_data.normalized_data
-labels = retrieve_data.labels
-lookback_days = retrieve_data.lookback_days
+test_days = 250
 
-test_days = 700
-
-X_train = normalized_data[:-test_days]
-X_test = normalized_data[-test_days:]
+X_train = design[:-test_days]
+X_test = design[-test_days:]
 
 y_train = labels[:-test_days]
 y_test = labels[-test_days:]
@@ -32,7 +28,7 @@ y_train = np_utils.to_categorical(y_train, num_classes) #Converts label data to 
 model = Sequential()
 
 ## Add a fully-connected layer.
-model.add(Dense(output_dim=10, input_dim=lookback_days))
+model.add(Dense(output_dim=50, input_dim=len(design.T)))
 
 ## Add tanh activation function to each neuron
 model.add(Activation("tanh"))
