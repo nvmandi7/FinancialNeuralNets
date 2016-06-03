@@ -78,4 +78,3 @@ test_labels = list(test_labels)
 print(test_labels.count(-1))
 print(test_labels.count(0))
 print(test_labels.count(1))
-

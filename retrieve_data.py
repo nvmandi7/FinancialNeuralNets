@@ -89,4 +89,3 @@ sampleDataTime = create_lookback_returns_data(sampleRawData, lookback_days)
 sampleDataFreq = np.fft.fft(sampleDataTime)
 
 
-
