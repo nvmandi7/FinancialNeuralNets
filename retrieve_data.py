@@ -3,6 +3,7 @@ import pandas as pd
 #import pandas.io.data as web
 import pandas_datareader.data as web
 import datetime
+from scipy.stats import zscore
 
 # ------------------------------------------
 # Time Series Features
@@ -119,7 +120,7 @@ factors = factors.drop(['Adj Close', 'Open', 'Close'], 1)
 factors = factors.ix[lookback_days-1:]
 
 design = np.hstack([factors, sampleDataTime, sampleDataFreq])[:-1]
-design = normalize_data(design)
+design = zscore(design)
 labels = create_labels(sampleAdjCloseData, lookback_days)
 
 
