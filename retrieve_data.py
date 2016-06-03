@@ -52,10 +52,10 @@ def create_labels(stock_adj_close, lookback_days):
 		cur_day = stock_adj_close.iloc[i+1]
 		prev_day = stock_adj_close.iloc[i]
 		day_return  = 100.0*(cur_day-prev_day)/prev_day
-		if day_return < -1:
+		if day_return < -0.5:
 			labels.append(0) #SELL
 			# stock_data.iloc[[i]] = -stock_data.iloc[[i]]
-		elif day_return > 1:
+		elif day_return > 0.5:
 			labels.append(1) #BUY
 		else:
 			labels.append(2)
@@ -119,6 +119,7 @@ factors = factors.drop(['Adj Close', 'Open', 'Close'], 1)
 factors = factors.ix[lookback_days-1:]
 
 design = np.hstack([factors, sampleDataTime, sampleDataFreq])[:-1]
+design = normalize_data(design)
 labels = create_labels(sampleAdjCloseData, lookback_days)
 
 

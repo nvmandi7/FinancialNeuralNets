@@ -31,13 +31,13 @@ y_test = np_utils.to_categorical(y_test_noncat, num_classes)
 model = Sequential()
 
 ## Add a fully-connected layer.
-model.add(Dense(output_dim=100, input_dim=len(design.T)))
+model.add(Dense(output_dim=50, input_dim=len(design.T)))
 
 ## Add tanh activation function to each neuron
-model.add(Activation("tanh"))
+model.add(Activation("relu"))
 
 ## Add a fully-connected layer.
-model.add(Dense(output_dim=100, input_dim=100))
+model.add(Dense(output_dim=50, input_dim=50))
 
 ## Add tanh activation function to each neuron
 model.add(Activation("tanh"))
@@ -69,7 +69,7 @@ model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.01, momentum=0
 # for l in model.layers: print(l.get_weights(), '\n')
 
 ## Fit the model (10% of training data used as validation set)
-model.fit(X_train, y_train, nb_epoch=5, batch_size=1,validation_split=0.1, show_accuracy=True)
+model.fit(X_train, y_train, nb_epoch=10, batch_size=1,validation_split=0.1, show_accuracy=True)
 
 score, acc = model.evaluate(X_test, y_test, batch_size=1)
 print('Test score:', score)
