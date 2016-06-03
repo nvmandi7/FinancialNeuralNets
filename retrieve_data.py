@@ -8,8 +8,8 @@ from scipy.stats import zscore
 # ------------------------------------------
 # Time Series Features
 
-start = datetime.datetime(2004,1,1)
-end = datetime.datetime(2016,5,20)
+start = datetime.datetime(2010,1,1)
+end = datetime.datetime(2016,6,1)
 day = datetime.timedelta(days=1)
 
 #S&P Prediction
@@ -47,7 +47,7 @@ BUY or 1 if returns for next day are positive
 SELL or 0 otherwise
 '''
 def create_labels(stock_adj_close, lookback_days):
-	hold = 1
+	hold = 2
 	num_rows = len(stock_adj_close.index)
 	labels = []
 	for i in range(lookback_days-1, num_rows-1):

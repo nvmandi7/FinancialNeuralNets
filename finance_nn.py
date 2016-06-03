@@ -6,8 +6,9 @@ from keras.layers.recurrent import LSTM
 from keras.layers.embeddings import Embedding
 from retrieve_data import design, labels, lookback_days
 import numpy as np
+import pickle
 
-test_days = 250
+test_days = 50
 
 X_train = design[:-test_days]
 X_test = design[-test_days:]
@@ -71,7 +72,7 @@ model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.01, momentum=0
 # for l in model.layers: print(l.get_weights(), '\n')
 
 ## Fit the model (10% of training data used as validation set)
-model.fit(X_train, y_train, nb_epoch=2, batch_size=1,validation_split=0.1, show_accuracy=True)
+model.fit(X_train, y_train, nb_epoch=5, batch_size=1,validation_split=0.0, show_accuracy=True)
 
 score, acc = model.evaluate(X_test, y_test, batch_size=1)
 print('Test score:', score)
@@ -94,3 +95,5 @@ def accuracy_matrix(actual, predicted):
 	return mat/mat.sum(axis=1)[:,np.newaxis]
 
 print(accuracy_matrix(np.array(y_test_noncat), test_labels))
+
+pickle.dump(model, open('model.p', 'wb'))
