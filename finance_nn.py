@@ -14,12 +14,13 @@ X_test = design[-test_days:]
 y_train = labels[:-test_days]
 y_test_noncat = labels[-test_days:]
 
-print("Number of BUY Training Examples", y_train.count(1))
 print("Number of SELL Training Examples", y_train.count(0))
-print("Number of HOLD Training Examples", y_train.count(2))
-print("Number of BUY Test Examples", y_test_noncat.count(1))
+print("Number of HOLD Training Examples", y_train.count(1))
+print("Number of BUY Training Examples", y_train.count(2))
+
 print("Number of SELL Test Examples", y_test_noncat.count(0))
-print("Number of HOLD Test Examples", y_test_noncat.count(2))
+print("Number of HOLD Test Examples", y_test_noncat.count(1))
+print("Number of BUY Test Examples", y_test_noncat.count(2))
 num_classes = 3
 
 y_train = np_utils.to_categorical(y_train, num_classes) #Converts label data to a matrix
@@ -69,7 +70,7 @@ model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.01, momentum=0
 # for l in model.layers: print(l.get_weights(), '\n')
 
 ## Fit the model (10% of training data used as validation set)
-model.fit(X_train, y_train, nb_epoch=10, batch_size=1,validation_split=0.1, show_accuracy=True)
+model.fit(X_train, y_train, nb_epoch=5, batch_size=1,validation_split=0.1, show_accuracy=True)
 
 score, acc = model.evaluate(X_test, y_test, batch_size=1)
 print('Test score:', score)
@@ -78,7 +79,7 @@ print('Test accuracy:', acc)
 
 test_labels = model.predict_classes(X_test, batch_size=1,verbose=1)
 
-test_labels = list(test_labels)
-print(test_labels.count(2))
-print(test_labels.count(0))
-print(test_labels.count(1))
+# test_labels = list(test_labels)
+# print(test_labels.count(0))
+# print(test_labels.count(1))
+# print(test_labels.count(2))

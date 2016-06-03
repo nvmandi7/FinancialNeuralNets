@@ -57,9 +57,9 @@ def create_labels(stock_adj_close, lookback_days):
 			labels.append(0) #SELL
 			# stock_data.iloc[[i]] = -stock_data.iloc[[i]]
 		elif day_return > 0.5:
-			labels.append(1) #BUY
+			labels.append(2) #BUY
 		else:
-			labels.append(2)
+			labels.append(1)
 	return labels
 
 # labels = create_labels(stockRawData, lookback_days)
