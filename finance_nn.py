@@ -5,6 +5,7 @@ from keras.layers.core import Dense, Activation, Dropout
 from keras.layers.recurrent import LSTM
 from keras.layers.embeddings import Embedding
 from retrieve_data import design, labels, lookback_days
+import numpy as np
 
 test_days = 250
 
@@ -69,7 +70,7 @@ model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.01, momentum=0
 # for l in model.layers: print(l.get_weights(), '\n')
 
 ## Fit the model (10% of training data used as validation set)
-model.fit(X_train, y_train, nb_epoch=10, batch_size=1,validation_split=0.1, show_accuracy=True)
+model.fit(X_train, y_train, nb_epoch=2, batch_size=1,validation_split=0.1, show_accuracy=True)
 
 score, acc = model.evaluate(X_test, y_test, batch_size=1)
 print('Test score:', score)
@@ -78,7 +79,18 @@ print('Test accuracy:', acc)
 
 test_labels = model.predict_classes(X_test, batch_size=1,verbose=1)
 
-test_labels = list(test_labels)
-print(test_labels.count(2))
-print(test_labels.count(0))
-print(test_labels.count(1))
+# test_labels = list(test_labels)
+print('SELL: ', sum(test_labels==0))
+print('HOLD: ', sum(test_labels==1))
+print('BUY: ', sum(test_labels==2))
+
+def accuracy_matrix(actual, predicted):
+	mat = np.ndarray((3,3))
+	for i in range(3):
+		inds = np.where(actual==i)
+		i_preds = predicted[inds]
+		mat[i] = np.array([np.sum([1 for k in i_preds if k==j]) for j in range(3)])
+	return mat/mat.sum(axis=1)[:,np.newaxis]
+
+print(accuracy_matrix(np.array(y_test_noncat), test_labels))
+

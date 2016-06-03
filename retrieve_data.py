@@ -47,16 +47,17 @@ BUY or 1 if returns for next day are positive
 SELL or 0 otherwise
 '''
 def create_labels(stock_adj_close, lookback_days):
+	hold = 1
 	num_rows = len(stock_adj_close.index)
 	labels = []
 	for i in range(lookback_days-1, num_rows-1):
 		cur_day = stock_adj_close.iloc[i+1]
 		prev_day = stock_adj_close.iloc[i]
 		day_return  = 100.0*(cur_day-prev_day)/prev_day
-		if day_return < -0.5:
+		if day_return < -hold:
 			labels.append(0) #SELL
 			# stock_data.iloc[[i]] = -stock_data.iloc[[i]]
-		elif day_return > 0.5:
+		elif day_return > hold:
 			labels.append(1) #BUY
 		else:
 			labels.append(2)
