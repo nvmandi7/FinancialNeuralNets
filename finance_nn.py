@@ -12,7 +12,7 @@ X_train = design[:-test_days]
 X_test = design[-test_days:]
 
 y_train = labels[:-test_days]
-y_test = labels[-test_days:]
+y_test_noncat = labels[-test_days:]
 
 print("Number of BUY Training Examples", y_train.count(1))
 print("Number of SELL Training Examples", y_train.count(0))
@@ -21,7 +21,7 @@ print("Number of SELL Test Examples", y_test.count(0))
 num_classes = 2
 
 y_train = np_utils.to_categorical(y_train, num_classes) #Converts label data to a matrix
-y_test = np_utils.to_categorical(y_test, num_classes)
+y_test = np_utils.to_categorical(y_test_noncat, num_classes)
 
 #################################
 # Model specification
@@ -29,9 +29,13 @@ y_test = np_utils.to_categorical(y_test, num_classes)
 model = Sequential()
 
 ## Add a fully-connected layer.
-model.add(Dense(output_dim=50, input_dim=len(design.T)))
+model.add(Dense(output_dim=100, input_dim=len(design.T)))
 
 ## Add tanh activation function to each neuron
+model.add(Activation("relu"))
+
+## Another layer
+model.add(Dense(output_dim=100, input_dim=100))
 model.add(Activation("relu"))
 
 ## Add another fully-connected layer with 2 neurons, one for each class of labels
@@ -74,4 +78,9 @@ test_labels = list(test_labels)
 print(test_labels.count(-1))
 print(test_labels.count(0))
 print(test_labels.count(1))
+
+
+
+
+
 
