@@ -16,9 +16,11 @@ y_test_noncat = labels[-test_days:]
 
 print("Number of BUY Training Examples", y_train.count(1))
 print("Number of SELL Training Examples", y_train.count(0))
-print("Number of BUY Test Examples", y_test.count(1))
-print("Number of SELL Test Examples", y_test.count(0))
-num_classes = 2
+print("Number of HOLD Training Examples", y_train.count(2))
+print("Number of BUY Test Examples", y_test_noncat.count(1))
+print("Number of SELL Test Examples", y_test_noncat.count(0))
+print("Number of HOLD Test Examples", y_test_noncat.count(2))
+num_classes = 3
 
 y_train = np_utils.to_categorical(y_train, num_classes) #Converts label data to a matrix
 y_test = np_utils.to_categorical(y_test_noncat, num_classes)
@@ -32,14 +34,16 @@ model = Sequential()
 model.add(Dense(output_dim=100, input_dim=len(design.T)))
 
 ## Add tanh activation function to each neuron
-model.add(Activation("relu"))
+model.add(Activation("tanh"))
 
-## Another layer
+## Add a fully-connected layer.
 model.add(Dense(output_dim=100, input_dim=100))
-model.add(Activation("relu"))
+
+## Add tanh activation function to each neuron
+model.add(Activation("tanh"))
 
 ## Add another fully-connected layer with 2 neurons, one for each class of labels
-model.add(Dense(output_dim=2, activation='softmax'))
+model.add(Dense(output_dim=3, activation='softmax'))
 
 '''
 Trying Recurrent NN
@@ -75,6 +79,6 @@ print('Test accuracy:', acc)
 test_labels = model.predict_classes(X_test, batch_size=1,verbose=1)
 
 test_labels = list(test_labels)
-print(test_labels.count(-1))
+print(test_labels.count(2))
 print(test_labels.count(0))
 print(test_labels.count(1))

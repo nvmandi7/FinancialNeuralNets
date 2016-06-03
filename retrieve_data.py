@@ -52,11 +52,13 @@ def create_labels(stock_adj_close, lookback_days):
 		cur_day = stock_adj_close.iloc[i+1]
 		prev_day = stock_adj_close.iloc[i]
 		day_return  = 100.0*(cur_day-prev_day)/prev_day
-		if day_return < 0:
+		if day_return < -1:
 			labels.append(0) #SELL
 			# stock_data.iloc[[i]] = -stock_data.iloc[[i]]
-		else:
+		elif day_return > 1:
 			labels.append(1) #BUY
+		else:
+			labels.append(2)
 	return labels
 
 # labels = create_labels(stockRawData, lookback_days)
