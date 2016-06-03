@@ -15,12 +15,13 @@ X_test = design[-test_days:]
 y_train = labels[:-test_days]
 y_test_noncat = labels[-test_days:]
 
-print("Number of BUY Training Examples", y_train.count(1))
 print("Number of SELL Training Examples", y_train.count(0))
-print("Number of HOLD Training Examples", y_train.count(2))
-print("Number of BUY Test Examples", y_test_noncat.count(1))
+print("Number of HOLD Training Examples", y_train.count(1))
+print("Number of BUY Training Examples", y_train.count(2))
+
 print("Number of SELL Test Examples", y_test_noncat.count(0))
-print("Number of HOLD Test Examples", y_test_noncat.count(2))
+print("Number of HOLD Test Examples", y_test_noncat.count(1))
+print("Number of BUY Test Examples", y_test_noncat.count(2))
 num_classes = 3
 
 y_train = np_utils.to_categorical(y_train, num_classes) #Converts label data to a matrix
@@ -93,4 +94,3 @@ def accuracy_matrix(actual, predicted):
 	return mat/mat.sum(axis=1)[:,np.newaxis]
 
 print(accuracy_matrix(np.array(y_test_noncat), test_labels))
-
