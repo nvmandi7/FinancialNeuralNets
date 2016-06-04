@@ -16,6 +16,8 @@ correlation_factors_offset = ["^GSPC", "^DJI", "^IXIC", "^GDAXI", "^FCHI", "^FTS
 correlation_factors = correlation_factors_no_offset+correlation_factors_offset
 
 stock_data = web.DataReader(stocks, 'yahoo', start, end)["Adj Close"]
+stock_data = stock_data.diff()
+stock_data = stock_data/abs(stock_data)
 print("Collected Stock Data")
 
 factors_without_offset = web.DataReader(correlation_factors_no_offset, 'yahoo', start, end)["Adj Close"]
@@ -23,7 +25,8 @@ factors_with_offset = web.DataReader(correlation_factors_offset, 'yahoo', start-
 factors_with_offset = factors_with_offset.shift(1)
 
 factors = pd.concat([factors_without_offset, factors_with_offset], axis=1)
-
+factors = factors.diff()
+# factors = factors/abs(factors)
 # Consider changing to returns?
 
 
@@ -47,8 +50,9 @@ for i in range(len(stocks)):
 		# print(correlation_table)
 		# correlation_table.plot.scatter(x=stock, y=factor)
 		# plt.show()
+		# break
 data = np.hstack((np.array(correlation_factors).reshape((len(correlation_factors), 1)), corrs.astype(str)))
-np.savetxt('corr_table.csv', data, fmt='%s', delimiter=',', newline='\n', header='Features\Stocks, ' + ", ".join(stocks))
+np.savetxt('corr_table_diff.csv', data, fmt='%s', delimiter=',', newline='\n', header='Features\Stocks, ' + ", ".join(stocks))
 
 
 # print(factors)
