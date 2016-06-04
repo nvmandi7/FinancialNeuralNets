@@ -8,21 +8,21 @@ from scipy.stats import zscore
 # ------------------------------------------
 # Time Series Features
 
-start = datetime.datetime(2010,1,1)
+start = datetime.datetime(2009,1,1)
 end = datetime.datetime(2016,6,1)
 day = datetime.timedelta(days=1)
 
 #S&P Prediction
 # stockRawData = web.DataReader("^GSPC", 'yahoo', start, end)
 
-correlation_factors_no_offset = ["^SSEC", "^N225", "^BSESN"] #China, Japan, India
-correlation_factors_offset = ["^GSPC", "^DJI", "^IXIC", "^GDAXI", "^FCHI", "^FTSE", "CNY=X", "JPY=X", "GBP=X", "EUR=X"] #DOW, Nasdaq, Germany, France, England, USD/CNY, USD/JPY, USD/GBP, USD/EUR
-correlation_factors = correlation_factors_no_offset+correlation_factors_offset
-factors_without_offset = web.DataReader(correlation_factors_no_offset, 'yahoo', start, end)["Adj Close"]
-factors_with_offset = web.DataReader(correlation_factors_offset, 'yahoo', start-day, end-day)["Adj Close"]
-factors_with_offset = factors_with_offset.shift(1)
-factors = pd.concat([factors_without_offset, factors_with_offset], axis=1)
-factors = factors.diff()/factors.shift(1)*100
+# correlation_factors_no_offset = ["^SSEC", "^N225", "^BSESN"] #China, Japan, India
+# correlation_factors_offset = ["^GSPC", "^DJI", "^IXIC", "^GDAXI", "^FCHI", "^FTSE", "CNY=X", "JPY=X", "GBP=X", "EUR=X"] #DOW, Nasdaq, Germany, France, England, USD/CNY, USD/JPY, USD/GBP, USD/EUR
+# correlation_factors = correlation_factors_no_offset+correlation_factors_offset
+# factors_without_offset = web.DataReader(correlation_factors_no_offset, 'yahoo', start, end)["Adj Close"]
+# factors_with_offset = web.DataReader(correlation_factors_offset, 'yahoo', start-day, end-day)["Adj Close"]
+# factors_with_offset = factors_with_offset.shift(1)
+# factors = pd.concat([factors_without_offset, factors_with_offset], axis=1)
+# factors = factors.diff()/factors.shift(1)*100
 
 # num_rows = len(stockRawData.index)
 
@@ -47,7 +47,7 @@ BUY or 1 if returns for next day are positive
 SELL or 0 otherwise
 '''
 def create_labels(stock_adj_close, lookback_days):
-	hold = 2
+	hold = 0.5
 	num_rows = len(stock_adj_close.index)
 	labels = []
 	for i in range(lookback_days-1, num_rows-1):
@@ -93,7 +93,7 @@ sampleRawData = web.DataReader(sample, 'yahoo', start, end)
 
 
 # ------------------------------------------
-# Other Features
+# Stock Market and Currency Features
 
 correlation_factors_no_offset = ["^SSEC", "^N225", "^BSESN"] #China, Japan, India
 correlation_factors_offset = ["^GSPC", "^DJI", "^IXIC", "^GDAXI", "^FCHI", "^FTSE", "CNY=X", "JPY=X", "GBP=X", "EUR=X"] #DOW, Nasdaq, Germany, France, England, USD/CNY, USD/JPY, USD/GBP, USD/EUR
@@ -102,9 +102,19 @@ correlation_factors = correlation_factors_no_offset+correlation_factors_offset
 
 factors_without_offset = web.DataReader(correlation_factors_no_offset, 'yahoo', start, end)["Adj Close"]
 factors_with_offset = web.DataReader(correlation_factors_offset, 'yahoo', start-day, end-day)["Adj Close"].shift(1)
-	
 
-factors = pd.concat([sampleRawData['Adj Close'], sampleRawData['Open'], sampleRawData['Close'], factors_without_offset, factors_with_offset], axis=1).dropna()
+# ------------------------------------------
+# Interest Rate Features
+tried = ["DGS3MO", "DGS5", "DGS10"]
+interest_rate_offset = ["DGS1MO", "DGS1", "DGS30"]
+fred_offset = interest_rate_offset
+fred_factors_offset = web.DataReader(fred_offset, 'fred', start-day, end-day).shift(1)
+
+# ------------------------------------------
+# Combining Features
+combined_factors = [sampleRawData['Adj Close'], sampleRawData['Open'], sampleRawData['Close'], factors_without_offset, factors_with_offset,\
+					fred_factors_offset]
+factors = pd.concat(combined_factors, axis=1).dropna()
 
 # ------------------------------------------
 # Frequency Domain Features
@@ -122,15 +132,6 @@ factors = factors.ix[lookback_days-1:]
 
 design = np.hstack([factors, sampleDataTime, sampleDataFreq])[:-1]
 design = zscore(design)
+design = np.nan_to_num(design)
 labels = create_labels(sampleAdjCloseData, lookback_days)
-
-
-
-
-
-
-
-
-
-
 
